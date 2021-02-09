@@ -1,9 +1,15 @@
 import React from 'react'
-
 import * as Yup from "yup";
 import {Formik} from "formik";
+import {useDispatch} from "react-redux";
+import {v1 as uuid} from 'uuid'
+
+import {addBook} from "../actions/actions";
+import Catalog from "../components/Catalog";
 
 function Home() {
+	let dispatch = useDispatch()
+
 	const validationSchema = Yup.object().shape({
 		title: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
 		author: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
@@ -13,8 +19,6 @@ function Home() {
 	return (
 		<div className="wrapper">
 
-			{/*<Input/>*/}
-
 			<Formik initialValues={{
 				title: '',
 				author: '',
@@ -23,7 +27,14 @@ function Home() {
 			}
 			}
 					validateOnBlur//валидация при переходе на след. поле
-					onSubmit={(values) => {localStorage.setItem('uuu', JSON.stringify(values))}}//вместо вывода в консоль тут можно отправить данные на сервер или изменять стейт
+					onSubmit={(values) => {
+						dispatch(addBook(
+							{
+								id:uuid(),
+								values: values
+							}
+						))
+						}}
 					validationSchema={validationSchema}
 			>
 				{ ( {
@@ -37,7 +48,7 @@ function Home() {
 						handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
 						dirty//показывает, изменялись ли когда-то значения в форме
 					} ) => (
-					<div className='form'>
+					<div className='addBookForm'>
 						<p>
 							<label htmlFor={'title'}>Название книги</label><br/>
 							<input
@@ -80,7 +91,7 @@ function Home() {
 						</p>
 
 						<p>
-							<label htmlFor={'ISBN'}>введите ISBN</label><br/>
+							<label htmlFor={'ISBN'}>Введите ISBN</label><br/>
 							<input
 								className={'input'}
 								type='text'
@@ -94,7 +105,7 @@ function Home() {
 						{touched.ISBN && errors.ISBN && <p className={'error'}>{errors.ISBN}</p>}
 
 						<button
-							className="btn btn-primary mx-2"
+							className="btn btn-primary m-4"
 							disabled={!isValid && !dirty}
 							onClick={handleSubmit}
 							type='submit'
@@ -102,9 +113,7 @@ function Home() {
 					</div>
 				)}
 			</Formik>
-
-			{/*<Catalog/>*/}
-
+			<Catalog/>
 		</div>
 	);
 }
