@@ -14,7 +14,7 @@ export const fetchUserFailure = error => ({type: FETCH_USERS_FAILURE, error});
 export const logIn = (props) => ({ type: LOG_IN, payload: props});
 export const logOut = () => ({ type: LOG_OUT });
 
-// добавление, удаление, редвктирование книги
+// добавление, удаление, редактирование книги
 export const ADD_BOOK = "ADD_BOOK";
 export const DELETE_BOOK = "DELETE_BOOK";
 export const UPDATE_BOOK = "UPDATE_BOOK";

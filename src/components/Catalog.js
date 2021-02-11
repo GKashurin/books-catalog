@@ -4,9 +4,7 @@ import {useSelector} from "react-redux";
 
 function Catalog() {
 
-
 	let books = useSelector(({booksReducer}) => booksReducer)
-	console.log(books)
 	return (
 		<div className="my-4">
 			{books.map(book => {

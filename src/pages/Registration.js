@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 
 function Registration() {
 
+
 	const validationSchema = Yup.object().shape({
 		name: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
 		secondName: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
