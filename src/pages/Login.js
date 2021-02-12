@@ -3,13 +3,13 @@ import * as Yup from "yup";
 import {Formik} from "formik";
 import {Link, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchUserSuccess} from "../actions/actions";
+import {fetchUserSuccess, signInByFirebase} from "../actions/actions";
 
 function Login() {
 	let dispatch = useDispatch()
 	const history = useHistory();
 
-	const isLoggedIn = useSelector(({loginReducer}) => loginReducer.isLoggedIn)
+	const isLoggedIn = useSelector(({loginReducer}) => !!loginReducer.user)
 //toolkit. createSlice
 	const validationSchema = Yup.object().shape({
 		email: Yup.string().email('Введите верный email').required('Поле обязательно'),
@@ -18,6 +18,10 @@ function Login() {
 
 	if (isLoggedIn) {
 		history.push("/home")
+	}
+
+	const handleSubmit = (values) => {
+		dispatch(signInByFirebase(values.email, values.password))
 	}
 
 	return (
@@ -30,6 +34,7 @@ function Login() {
 				password: ''
 			}
 			}
+					onSubmit={handleSubmit}
 					validateOnBlur//валидация при переходе на след. поле
 					validationSchema={validationSchema}
 			>
@@ -74,9 +79,7 @@ function Login() {
 						<button
 							className="btn btn-primary mx-2"
 							disabled={!isValid && !dirty}
-							onClick={() => {
-								dispatch(fetchUserSuccess())
-							}}
+							onClick={handleSubmit}
 							type='submit'
 						>Войти</button>
 					</div>

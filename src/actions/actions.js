@@ -1,3 +1,5 @@
+import firebase from 'firebase';
+
 // авторизация
 export const LOG_IN = "LOG_IN";
 export const LOG_OUT = "LOG_OUT";
@@ -25,5 +27,13 @@ export const addBook = book => ({type: ADD_BOOK, payload: book});
 export const deleteBook = bookId => ({type: DELETE_BOOK, payload: bookId});
 
 export const updateBook = book => ({type: UPDATE_BOOK, payload: book});
+
+//работа с БД firebase
+export const signInByFirebase = (email, password) => (dispatch) => {
+	firebase.auth().signInWithEmailAndPassword(email, password)
+		.then(userCredential => {dispatch(logIn(userCredential.user))})
+		.then(response => {console.log(response)})
+		.catch(error => console.log(error))
+}
 
 
