@@ -1,28 +1,12 @@
-import React, {useState} from 'react'
-import {useDispatch} from "react-redux";
-import {deleteBook, updateBook} from "../actions/actions";
+import React, { useState } from 'react'
 
-function Book({book}) {
-	const [editable, setEditable] = useState(false)
-	const [title, setTitle] = useState(book.values.title)
-	const [author, setAuthor] = useState(book.values.author)
-	const [year, setYear] = useState(book.values.year)
-	const [ISBN, setISBN] = useState(book.values.ISBN)
 
-	let dispatch = useDispatch();
+function Book({ book, editable, bookUpdate, bookDelete }) {
+	const [title, setTitle] = useState(book.title)
+	const [author, setAuthor] = useState(book.author)
+	const [year, setYear] = useState(book.year)
+	const [ISBN, setISBN] = useState(book.ISBN)
 
-	const bookUpdate = () => {
-		dispatch(updateBook(
-		{
-		 		id: book.id,
-		 		title,
-				author,
-				year,
-				ISBN
-		}
-		))
-		setEditable(!editable)
-	}
 
 	return (
 		<>
@@ -31,30 +15,30 @@ function Book({book}) {
 					{
 						!editable ?
 							<>
-								<h5>Название : <i>{book.values.title}</i></h5>
-								<h5>Автор : <i>{book.values.author}</i></h5>
-								<h5>Год издания : <i>{book.values.year}</i></h5>
-								<h5>ISBN : <i>{book.values.ISBN}</i></h5>
+								<h5>Название : <i>{book.title}</i></h5>
+								<h5>Автор : <i>{book.author}</i></h5>
+								<h5>Год издания : <i>{book.year}</i></h5>
+								<h5>ISBN : <i>{book.ISBN}</i></h5>
 							</>
 							: <div className="addBookForm">
 								<input type="text"
-									   value={title}
-									   name="title"
-									   onChange={(event) => setTitle(event.target.value)}
+									value={title}
+									name="title"
+									onChange={(event) => setTitle(event.target.value)}
 								/>
 								<input type="text"
-									   value={author}
-									   name="author"
-									   onChange={(event) => setAuthor(event.target.value)}/>
+									value={author}
+									name="author"
+									onChange={(event) => setAuthor(event.target.value)} />
 								<input type="number"
-									   value={year}
-									   name="year"
-									   onChange={(event) => setYear(event.target.value)}
+									value={year}
+									name="year"
+									onChange={(event) => setYear(event.target.value)}
 								/>
 								<input type="text"
-									   value={ISBN}
-									   name="ISBN"
-									   onChange={(event) => setISBN(event.target.value)}
+									value={ISBN}
+									name="ISBN"
+									onChange={(event) => setISBN(event.target.value)}
 								/>
 							</div>
 
@@ -63,12 +47,12 @@ function Book({book}) {
 
 				</div>
 				<button
-					onClick={bookUpdate}
+					onClick={() => bookUpdate({ id: book.id, title, author, year, ISBN })}
 					className="btn btn-primary m-2">{!editable ? "Изменить" : "Обновить"}
 				</button>
 
 				<button
-					onClick={() => dispatch(deleteBook(book.id))}
+					 onClick={() => bookDelete(book)}
 					className="btn btn-danger m-2">Удалить
 				</button>
 			</div>

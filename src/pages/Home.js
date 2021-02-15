@@ -1,14 +1,58 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from "yup";
-import {Formik} from "formik";
-import {useDispatch} from "react-redux";
-import {v1 as uuid} from 'uuid'
+import { Formik } from "formik";
+import { useDispatch } from "react-redux";
 
-import {addBook} from "../actions/actions";
 import Catalog from "../components/Catalog";
+import firebase from 'firebase';
 
 function Home() {
-	let dispatch = useDispatch()
+	const [books, setBooks] = useState([]);
+	const [editableBook, setEditableBook] = useState(undefined)
+
+	const bookUpdate = (book) => {
+		const { id, ...otherBook } = book;
+		if (!!editableBook) {
+			setEditableBook(undefined);
+			firebase.firestore().collection('books').doc(id).update(otherBook).then(() => {
+				alert('Успешно обновлена книга');
+				setBooks(books => books.map(x => x.id === id ? book : x));
+			}).catch((err) => {
+				alert('Ошибка обновления книги')
+				console.log(err);
+			});
+
+			return;
+		}
+
+		setEditableBook(book);
+	}
+
+	const bookDelete = (book) => {
+		firebase.firestore().collection('books').doc(book.id).delete().then(() => {
+			setBooks(books => books.filter(x => x.id !== book.id))
+		}).catch(err => {
+			console.log(err);
+			alert('Ошибка удаления книги');
+		})
+	}
+
+	const bookAdd = (book) => {
+		firebase.firestore().collection('books').add(book).then((value) => {
+			setBooks(books => [...books, { id: value.id, ...book }]);
+			alert('Успешно добавлена книга');
+
+		}).catch(err => {
+			console.log(err);
+			alert('Ошибка добавления книги');
+		})
+	}
+
+	useEffect(() => {
+		firebase.firestore().collection('books').get().then(({ docs }) => {
+			setBooks(docs?.map(x => ({ ...x.data(), id: x.id })));
+		});
+	}, []);
 
 	const validationSchema = Yup.object().shape({
 		title: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
@@ -24,33 +68,25 @@ function Home() {
 				author: '',
 				year: '',
 				ISBN: ''
-			}
-			}
-					validateOnBlur//валидация при переходе на след. поле
-					onSubmit={(values) => {
-						dispatch(addBook(
-							{
-								id:uuid(),
-								values: values
-							}
-						))
-						}}
-					validationSchema={validationSchema}
+			}}
+				validateOnBlur//валидация при переходе на след. поле
+				onSubmit={bookAdd}
+				validationSchema={validationSchema}
 			>
-				{ ( {
-						//объект внутри - это children
-						values,
-						errors,
-						touched,//показывает, взаимодействовал ли пользователь с полем ранее
-						handleChange, //вызывается, когда меняется значение формы
-						handleBlur, //вызывается, когда пользователь уходит с поля
-						isValid,//показывает валидна форма в данный момент или нет
-						handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
-						dirty//показывает, изменялись ли когда-то значения в форме
-					} ) => (
+				{({
+					//объект внутри - это children
+					values,
+					errors,
+					touched,//показывает, взаимодействовал ли пользователь с полем ранее
+					handleChange, //вызывается, когда меняется значение формы
+					handleBlur, //вызывается, когда пользователь уходит с поля
+					isValid,//показывает валидна форма в данный момент или нет
+					handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
+					dirty//показывает, изменялись ли когда-то значения в форме
+				}) => (
 					<div className='addBookForm'>
 						<p>
-							<label htmlFor={'title'}>Название книги</label><br/>
+							<label htmlFor={'title'}>Название книги</label><br />
 							<input
 								className={'input'}
 								type='text'
@@ -64,7 +100,7 @@ function Home() {
 						{touched.title && errors.title && <p className={'error'}>{errors.title}</p>}
 
 						<p>
-							<label htmlFor={'author'}>Автор</label><br/>
+							<label htmlFor={'author'}>Автор</label><br />
 							<input
 								className={'input'}
 								type='text'
@@ -78,7 +114,7 @@ function Home() {
 						{touched.author && errors.author && <p className={'error'}>{errors.author}</p>}
 
 						<p>
-							<label htmlFor={'year'}>Год издания</label><br/>
+							<label htmlFor={'year'}>Год издания</label><br />
 							<input
 								className={'input'}
 								type="number"
@@ -91,7 +127,7 @@ function Home() {
 						</p>
 
 						<p>
-							<label htmlFor={'ISBN'}>Введите ISBN</label><br/>
+							<label htmlFor={'ISBN'}>Введите ISBN</label><br />
 							<input
 								className={'input'}
 								type='text'
@@ -113,7 +149,12 @@ function Home() {
 					</div>
 				)}
 			</Formik>
-			<Catalog/>
+			<Catalog
+				books={books}
+				editableBook={editableBook}
+				bookUpdate={bookUpdate}
+				bookDelete={bookDelete}
+			/>
 		</div>
 	);
 }
