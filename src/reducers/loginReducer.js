@@ -10,7 +10,6 @@ const initialState = {
 export const loginReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case LOG_IN: {
-
 			return {
 				...state,
 				isLoggedIn: true,
@@ -18,10 +17,14 @@ export const loginReducer = (state = initialState, action) => {
 			}
 		}
 		case FETCH_USERS_SUCCESS: {
-			return {isLoggedIn: true}
+			return {
+				isLoggedIn: true
+			}
 		}
 		case LOG_OUT: {
-			return {isLoggedIn: false}
+			return {
+				isLoggedIn: false
+			}
 		}
 		default:
 			return state;

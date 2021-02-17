@@ -1,19 +1,22 @@
 import React from 'react'
 import Book from "./Book";
-import {useSelector} from "react-redux";
 
-function Catalog() {
+function Catalog({ books, editableBook, bookUpdate, bookDelete }) {
 
-	let books = useSelector(({booksReducer}) => booksReducer)
 	return (
 		<div className="my-4">
 			{books.map(book => {
 				return <Book
+					editable={book.id === editableBook?.id}
 					key={book.id}
-					book={book}/>
+					book={book}
+					bookUpdate={bookUpdate}
+					bookDelete={bookDelete}
+				/>
 			})}
 		</div>
 	)
 }
 
 export default Catalog
+

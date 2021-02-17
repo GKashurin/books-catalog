@@ -1,14 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from "yup";
 import {Formik} from "formik";
-import {useDispatch} from "react-redux";
-import {v1 as uuid} from 'uuid'
+import firebase from 'firebase';
 
-import {addBook} from "../actions/actions";
 import Catalog from "../components/Catalog";
+import {useDispatch, useSelector} from "react-redux";
+import {addBook, addBookToFirebase, initialiseBooks, removeBookFromFirebase, setInitialBook} from "../actions/actions";
 
 function Home() {
-	let dispatch = useDispatch()
+	const [ ,setBooks] = useState([]);
+	const [editableBook, setEditableBook] = useState(undefined)
+	const books = useSelector((state => state.booksReducer));
+	const dispatch = useDispatch();
+
+	const bookUpdate = (book) => {
+		const { id, ...otherBook } = book;
+		if (!!editableBook) {
+			setEditableBook(undefined);
+			firebase.firestore().collection('books').doc(id).update(otherBook)
+				.then(() => {
+				setBooks(books => books.map(item => item.id === id ? book : item));
+			})
+				.catch((err) => console.log(err));
+			return;
+		}
+		setEditableBook(book);
+	}
+
+	const bookDelete = (book) => {
+		dispatch(removeBookFromFirebase(book))
+	}
+
+	const handleOnSubmitAddBookForm = (book) => {
+		dispatch(addBookToFirebase(book))
+	}
+
+	useEffect(() => {
+		dispatch(initialiseBooks());
+
+	}, []);
 
 	const validationSchema = Yup.object().shape({
 		title: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
@@ -26,27 +56,20 @@ function Home() {
 				ISBN: ''
 			}
 			}
-					validateOnBlur//валидация при переходе на след. поле
-					onSubmit={(values) => {
-						dispatch(addBook(
-							{
-								id:uuid(),
-								values: values
-							}
-						))
-						}}
+					validateOnBlur
+					onSubmit={handleOnSubmitAddBookForm}
 					validationSchema={validationSchema}
 			>
 				{ ( {
-						//объект внутри - это children
+
 						values,
 						errors,
-						touched,//показывает, взаимодействовал ли пользователь с полем ранее
-						handleChange, //вызывается, когда меняется значение формы
-						handleBlur, //вызывается, когда пользователь уходит с поля
-						isValid,//показывает валидна форма в данный момент или нет
-						handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
-						dirty//показывает, изменялись ли когда-то значения в форме
+						touched,
+						handleChange,
+						handleBlur,
+						isValid,
+						handleSubmit,
+						dirty
 					} ) => (
 					<div className='addBookForm'>
 						<p>
@@ -113,7 +136,12 @@ function Home() {
 					</div>
 				)}
 			</Formik>
-			<Catalog/>
+			<Catalog
+				books={books}
+				editableBook={editableBook}
+				bookUpdate={bookUpdate}
+				bookDelete={bookDelete}
+			/>
 		</div>
 	);
 }

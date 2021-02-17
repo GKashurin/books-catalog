@@ -1,10 +1,15 @@
 import React from 'react'
 import * as Yup from "yup";
 import {Formik} from "formik";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {regisrationByFirebase} from "../actions/actions";
 
 function Registration() {
+	let dispatch = useDispatch()
+	const history = useHistory();
 
+	const isLoggedIn = useSelector(({loginReducer}) => !!loginReducer.user)
 
 	const validationSchema = Yup.object().shape({
 		name: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
@@ -13,6 +18,14 @@ function Registration() {
 		password: Yup.string().typeError('Должно быть строкой').required('Поле обязательно'),
 		confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Пароли не совпадают').required('Поле обязательно'),
 	})
+
+	if (isLoggedIn) {
+		history.push("/home")
+	}
+
+	const handleSubmit =(values) => {
+		dispatch(regisrationByFirebase(values.email, values.password))
+	}
 
 	return (
 		<div>
@@ -28,20 +41,20 @@ function Registration() {
 				confirmPassword: ''
 			}
 			}
-					validateOnBlur//валидация при переходе на след. поле
-					onSubmit={(values) => {console.log(values)}}//вместо вывода в консоль тут можно отправить данные на сервер или изменять стейт
+					onSubmit={handleSubmit}
+					validateOnBlur
 					validationSchema={validationSchema}
 			>
 				{ ( {
-						//объект внутри - это children
+
 						values,
 						errors,
-						touched,//показывает, взаимодействовал ли пользователь с полем ранее
-						handleChange, //вызывается, когда меняется значение формы
-						handleBlur, //вызывается, когда пользователь уходит с поля
-						isValid,//показывает валидна форма в данный момент или нет
-						handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
-						dirty//показывает, изменялись ли когда-то значения в форме
+						touched,
+						handleChange,
+						handleBlur,
+						isValid,
+						handleSubmit,
+						dirty
 					} ) => (
 					<div className='form'>
 						<p>

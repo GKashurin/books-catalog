@@ -1,21 +1,10 @@
 import {
 	ADD_BOOK,
-	DELETE_BOOK,
+	DELETE_BOOK, SET_INITIAL_BOOK,
 	UPDATE_BOOK,
 } from "../actions/actions"
 
-let initialState = [
-	{
-		id: '',
-		values: {
-			title:"Учение Дона Хуана",
-			author:"Карлос Кастанеда",
-			year:"2000",
-			ISBN:"a78a-654",
-		}
-	}
-]
-//сделать стейт объектом
+let initialState = []
 
 export const booksReducer = (state = initialState, action) => {
 	let newBooks;
@@ -24,6 +13,10 @@ export const booksReducer = (state = initialState, action) => {
 		case ADD_BOOK:
 			newBooks = [...state, action.payload];
 			return newBooks
+
+		case SET_INITIAL_BOOK:
+			newBooks = action.payload
+			return newBooks;
 
 		case DELETE_BOOK:
 			newBooks = [...state];
@@ -47,5 +40,3 @@ export const booksReducer = (state = initialState, action) => {
 		default: return state
 	}
 }
-
-// Я вызываю метод filter() на массиве newBooks(является копией стейта), состоящим из объектов и передаю функцию, которая отрабатывает на каждом элементе этого массива. Внутри функции проверяею значение id. Если id элемента не совпадает с тем, по которому кликнул пользователь, то элемент остается в новом массиве. Метод filter(), работая с финальным массивом, включит в него только элементы, на котором отработала функция и который подошел по всем условиям, выдав true.

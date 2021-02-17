@@ -1,28 +1,11 @@
 import React, {useState} from 'react'
-import {useDispatch} from "react-redux";
-import {deleteBook, updateBook} from "../actions/actions";
 
-function Book({book}) {
-	const [editable, setEditable] = useState(false)
-	const [title, setTitle] = useState(book.values.title)
-	const [author, setAuthor] = useState(book.values.author)
-	const [year, setYear] = useState(book.values.year)
-	const [ISBN, setISBN] = useState(book.values.ISBN)
+function Book({book, editable, bookUpdate, bookDelete}) {
 
-	let dispatch = useDispatch();
-
-	const bookUpdate = () => {
-		dispatch(updateBook(
-		{
-		 		id: book.id,
-		 		title,
-				author,
-				year,
-				ISBN
-		}
-		))
-		setEditable(!editable)
-	}
+	const [title, setTitle] = useState(book.title)
+	const [author, setAuthor] = useState(book.author)
+	const [year, setYear] = useState(book.year)
+	const [ISBN, setISBN] = useState(book.ISBN)
 
 	return (
 		<>
@@ -31,10 +14,10 @@ function Book({book}) {
 					{
 						!editable ?
 							<>
-								<h5>Название : <i>{book.values.title}</i></h5>
-								<h5>Автор : <i>{book.values.author}</i></h5>
-								<h5>Год издания : <i>{book.values.year}</i></h5>
-								<h5>ISBN : <i>{book.values.ISBN}</i></h5>
+								<h5>Название : <i>{book.title}</i></h5>
+								<h5>Автор : <i>{book.author}</i></h5>
+								<h5>Год издания : <i>{book.year}</i></h5>
+								<h5>ISBN : <i>{book.ISBN}</i></h5>
 							</>
 							: <div className="addBookForm">
 								<input type="text"
@@ -57,18 +40,16 @@ function Book({book}) {
 									   onChange={(event) => setISBN(event.target.value)}
 								/>
 							</div>
-
 					}
-
-
 				</div>
+
 				<button
-					onClick={bookUpdate}
+					onClick={() => bookUpdate({ id: book.id, title, author, year, ISBN })}
 					className="btn btn-primary m-2">{!editable ? "Изменить" : "Обновить"}
 				</button>
 
 				<button
-					onClick={() => dispatch(deleteBook(book.id))}
+					onClick={() => (bookDelete(book))}
 					className="btn btn-danger m-2">Удалить
 				</button>
 			</div>

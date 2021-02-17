@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import {Formik} from "formik";
 import {Link, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchUserSuccess, signInByFirebase} from "../actions/actions";
+import {signInByFirebase} from "../actions/actions";
 
 function Login() {
 	let dispatch = useDispatch()
@@ -20,7 +20,7 @@ function Login() {
 		history.push("/home")
 	}
 
-	const handleSubmit = (values) => {
+	const handleSubmit =(values) => {
 		dispatch(signInByFirebase(values.email, values.password))
 	}
 
@@ -35,19 +35,18 @@ function Login() {
 			}
 			}
 					onSubmit={handleSubmit}
-					validateOnBlur//валидация при переходе на след. поле
+					validateOnBlur
 					validationSchema={validationSchema}
 			>
 				{ ( {
-						//объект внутри - это children
 						values,
 						errors,
-						touched,//показывает, взаимодействовал ли пользователь с полем ранее
-						handleChange, //вызывается, когда меняется значение формы
-						handleBlur, //вызывается, когда пользователь уходит с поля
-						isValid,//показывает валидна форма в данный момент или нет
-						handleSubmit,// привязывается к кнопке отправки формы. Вызывает функцию onSubmit
-						dirty//показывает, изменялись ли когда-то значения в форме
+						touched,
+						handleChange,
+						handleBlur,
+						isValid,
+						handleSubmit,
+						dirty
 					} ) => (
 					<div className='form'>
 
