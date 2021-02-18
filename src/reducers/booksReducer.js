@@ -29,10 +29,10 @@ export const booksReducer = (state = initialState, action) => {
 			newBooks = state;
 			newBooks.map(function(book) {
 				if(book.id === action.payload.id){
-					book.values.title = action.payload.title
-					book.values.author = action.payload.author
-					book.values.year = action.payload.year
-					book.values.ISBN = action.payload.ISBN	}
+					book.title = action.payload.title
+					book.author = action.payload.author
+					book.year = action.payload.year
+					book.ISBN = action.payload.ISBN	}
 				return book
 			})
 			return newBooks

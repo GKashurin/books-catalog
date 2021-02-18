@@ -22,7 +22,7 @@ export const UPDATE_BOOK = "UPDATE_BOOK";
 export const SET_INITIAL_BOOK = "SET_INITIAL_BOOK";
 
 export const addBook = book => ({type: ADD_BOOK, payload: book});
-export const deleteBook = bookId => ({type: DELETE_BOOK, payload: bookId});
+export const deleteBook = book => ({type: DELETE_BOOK, payload: book.id});
 export const updateBook = book => ({type: UPDATE_BOOK, payload: book});
 export const setInitialBook = book => ({type: SET_INITIAL_BOOK, payload: book});
 

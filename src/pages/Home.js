@@ -5,25 +5,34 @@ import firebase from 'firebase';
 
 import Catalog from "../components/Catalog";
 import {useDispatch, useSelector} from "react-redux";
-import {addBook, addBookToFirebase, initialiseBooks, removeBookFromFirebase, setInitialBook} from "../actions/actions";
+import {
+	addBookToFirebase,
+	initialiseBooks,
+	removeBookFromFirebase,
+	updateBook
+} from "../actions/actions";
 
 function Home() {
-	const [ ,setBooks] = useState([]);
+	const [,setBooks] = useState([]);
 	const [editableBook, setEditableBook] = useState(undefined)
 	const books = useSelector((state => state.booksReducer));
 	const dispatch = useDispatch();
 
-	const bookUpdate = (book) => {
+	const updateBookToFirebase = (book) => {
 		const { id, ...otherBook } = book;
 		if (!!editableBook) {
 			setEditableBook(undefined);
+
 			firebase.firestore().collection('books').doc(id).update(otherBook)
 				.then(() => {
-				setBooks(books => books.map(item => item.id === id ? book : item));
+					dispatch(updateBook({ id: book.id, ...book }))
+				setBooks(books => books.map(item => item.id === id ? book : item))
 			})
+
 				.catch((err) => console.log(err));
 			return;
 		}
+
 		setEditableBook(book);
 	}
 
@@ -139,7 +148,7 @@ function Home() {
 			<Catalog
 				books={books}
 				editableBook={editableBook}
-				bookUpdate={bookUpdate}
+				bookUpdate={updateBookToFirebase}
 				bookDelete={bookDelete}
 			/>
 		</div>
