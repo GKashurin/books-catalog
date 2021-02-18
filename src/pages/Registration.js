@@ -30,7 +30,7 @@ function Registration() {
 	return (
 		<div>
 			<div className="registration-text">
-				Уже зарегистрирован?
+				Уже зарегистрированы?
 				<Link to="/"> Войти</Link>
 			</div>
 			<Formik initialValues={{

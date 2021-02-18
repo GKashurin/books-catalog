@@ -40,8 +40,9 @@ function Home() {
 		dispatch(removeBookFromFirebase(book))
 	}
 
-	const handleOnSubmitAddBookForm = (book) => {
-		dispatch(addBookToFirebase(book))
+	const handleOnSubmitAddBookForm = (book, {resetForm}) => {
+		dispatch(addBookToFirebase(book));
+		resetForm();
 	}
 
 	useEffect(() => {

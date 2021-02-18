@@ -7,9 +7,16 @@
 }
 
 .wrapper {
-  height: 100vh;
+  /* height: 100vh; */
+  /* background: url('./assets/Latin_dictionary.jpg') no-repeat ;
+  background-size: cover; */
+}
+
+.main {
   background: url('./assets/Latin_dictionary.jpg') no-repeat ;
   background-size: cover;
+  min-height: 100vh;
+  height: 100%;
 }
 
 .header {

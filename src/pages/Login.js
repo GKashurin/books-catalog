@@ -10,7 +10,6 @@ function Login() {
 	const history = useHistory();
 
 	const isLoggedIn = useSelector(({loginReducer}) => !!loginReducer.user)
-//toolkit. createSlice
 	const validationSchema = Yup.object().shape({
 		email: Yup.string().email('Введите верный email').required('Поле обязательно'),
 		password: Yup.string().typeError('Должно быть строкой').required('Поле обязательно')

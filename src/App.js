@@ -12,8 +12,8 @@ function App() {
 
 	return (
 		<div className="wrapper">
+            <section className='main'>
 			<Header/>
-            <section>
                 <Switch>
                     <Route exact path="/" component={Login} />
                     <Route path="/registration" component={Registration} />
