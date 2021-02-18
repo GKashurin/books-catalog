@@ -18,6 +18,7 @@ export const loginReducer = (state = initialState, action) => {
 		}
 		case FETCH_USERS_SUCCESS: {
 			return {
+				...state,
 				isLoggedIn: true
 			}
 		}
